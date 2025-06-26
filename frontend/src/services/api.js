@@ -126,7 +126,7 @@ export const authAPI = {
 // 用户相关 API - 对应 backend/app/routers/users.py
 export const userAPI = {
   // 获取所有用户 - GET /api/users
-  getUsers: (skip = 0, limit = 100) => apiRequest(`/api/users?skip=${skip}&limit=${limit}`),
+  getUsers: (skip = 0, limit = 100) => apiRequest(`/api/users/?skip=${skip}&limit=${limit}`),
   
   // 获取单个用户 - GET /api/users/{user_id}
   getUser: (userId) => apiRequest(`/api/users/${userId}`),
@@ -179,7 +179,7 @@ export const cardAPI = {
 // 抽题相关 API - 对应 backend/app/routers/draw.py
 export const drawAPI = {
   // 抽取卡片 - POST /api/draw
-  drawCards: (userId, drawData) => apiRequest(`/api/draw?user_id=${userId}`, {
+  drawCards: (userId, drawData) => apiRequest(`/api/draw/?user_id=${userId}`, {
     method: 'POST',
     body: JSON.stringify(drawData),
   }),
@@ -206,7 +206,7 @@ export const drawAPI = {
 // 用户设置相关 API - 对应 backend/app/routers/settings.py
 export const settingsAPI = {
   // 创建或更新设置 - POST /api/settings
-  createOrUpdateSettings: (userId, settingsData) => apiRequest(`/api/settings?user_id=${userId}`, {
+  createOrUpdateSettings: (userId, settingsData) => apiRequest(`/api/settings/?user_id=${userId}`, {
     method: 'POST',
     body: JSON.stringify(settingsData),
   }),
