@@ -10,7 +10,17 @@
  */
 
 // API 基础配置
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+let API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+if (!API_BASE_URL) {
+  if (import.meta.env.DEV) {
+    // 开发环境，使用Vite代理
+    API_BASE_URL = '/api'
+  } else {
+    // 生产环境，自动适配当前域名+8000端口
+    const { protocol, hostname } = window.location
+    API_BASE_URL = `${protocol}//${hostname}:8000`
+  }
+}
 
 // 获取存储的token
 function getAuthToken() {
@@ -124,9 +134,9 @@ export const userAPI = {
 
 // 卡片相关 API - 对应 backend/app/routers/cards.py
 export const cardAPI = {
-  // 获取所有卡片 - GET /api/cards
+  // 获取所有卡片 - GET /api/cards/
   getCards: (cardType = null, skip = 0, limit = 100) => {
-    let url = `/api/cards?skip=${skip}&limit=${limit}`
+    let url = `/api/cards/?skip=${skip}&limit=${limit}`
     if (cardType) url += `&card_type=${cardType}`
     return apiRequest(url)
   },
