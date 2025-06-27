@@ -1,4 +1,4 @@
-<!-- 题目卡片组件 -->
+<!-- 卡片卡片组件 -->
 <template>
   <div 
     class="question-card"
@@ -69,7 +69,7 @@ function formatDate(dateString) {
 }
 
 function confirmDelete() {
-  if (confirm('确定要删除这道题目吗？此操作不可撤销。')) {
+  if (confirm('确定要删除这张卡片吗？此操作不可撤销。')) {
     emit('delete', props.question.id)
   }
 }

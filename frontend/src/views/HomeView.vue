@@ -8,17 +8,17 @@
       <div class="actions-grid">
         <router-link to="/cards" class="action-card primary">
           <div class="card-icon">📚</div>
-          <h3>题目管理</h3>
-          <p>添加、编辑和管理你的学习题目</p>
+          <h3>卡片管理</h3>
+          <p>添加、编辑和管理你的学习卡片</p>
           <div class="card-stats">
-            <span>{{ questionStats.total || 0 }} 道题目</span>
+            <span>{{ questionStats.total || 0 }} 道卡片</span>
           </div>
         </router-link>
         
         <router-link to="/practice" class="action-card secondary">
           <div class="card-icon">🎯</div>
-          <h3>抽题练习</h3>
-          <p>从你所添加的题目中抽题练习</p>
+          <h3>抽卡练习</h3>
+          <p>从你所添加的学习卡片中抽卡练习</p>
           <div class="card-stats">
             <template v-if="questionStats.realTypes && questionStats.realTypes.length > 0">
               <template v-for="(type, idx) in questionStats.realTypes" :key="type">
@@ -43,7 +43,7 @@
         <router-link to="/settings" class="action-card neutral">
           <div class="card-icon">⚙️</div>
           <h3>系统设置</h3>
-          <p>配置抽题偏好和个人设置</p>
+          <p>配置个人设置</p>
           <div class="card-stats">
             <span>个性化配置</span>
           </div>
@@ -83,7 +83,7 @@ onMounted(() => {
 // 方法
 async function loadStats() {
   try {
-    // 获取题目统计
+    // 获取卡片统计
     const cards = await cardAPI.getCards()
     // 统计题型及数量
     const typeCountMap = {}
@@ -98,7 +98,7 @@ async function loadStats() {
       realTypes: Object.keys(typeCountMap)
     }
   } catch (error) {
-    console.error('获取题目统计失败:', error)
+    console.error('获取卡片统计失败:', error)
     questionStats.value = {
       total: 0,
       typeCountMap: {},
@@ -124,7 +124,7 @@ async function loadStats() {
 
 async function quickDraw() {
   if (questionStats.value.total === 0) {
-    alert('请先添加一些题目再开始练习')
+    alert('请先添加一些卡片再开始练习')
     return
   }
   router.push('/practice')

@@ -1,12 +1,12 @@
-<!-- 题目表单组件 -->
+<!-- 卡片表单组件 -->
 <template>
   <form @submit.prevent="handleSubmit" class="question-form">
     <div class="form-group">
-      <label for="content">题目内容 *</label>
+      <label for="content">卡片内容 *</label>
       <textarea 
         id="content"
         v-model="form.content" 
-        placeholder="请输入题目内容..."
+        placeholder="请输入卡片内容..."
         rows="4"
         required
         :class="{ 'error': errors.content }"
@@ -16,7 +16,7 @@
     </div>
 
     <div class="form-group">
-      <label for="card_type">题目标记 *</label>
+      <label for="card_type">卡片标签 *</label>
       <select 
         id="card_type" 
         v-model="form.card_type" 
@@ -24,20 +24,20 @@
         :class="{ 'error': errors.card_type }"
         @change="validateField('card_type')"
       >
-        <option value="">请选择题目标记</option>
+        <option value="">请选择卡片标签</option>
         <option v-for="type in allAvailableTypes" :key="type" :value="type">
           {{ type }}
         </option>
-        <option value="new">新增标记</option>
+        <option value="new">新增标签</option>
       </select>
       <span v-if="errors.card_type" class="error-message">{{ errors.card_type }}</span>
       
-      <!-- 新增标记输入框 -->
+      <!-- 新增标签输入框 -->
       <div v-if="form.card_type === 'new'" class="custom-type-input">
         <input 
           type="text" 
           v-model="newType"
-          placeholder="请输入新的标记 (如: 名词解释题, 简答题等)"
+          placeholder="请输入新的标签 (如: 名词解释题, 简答题等)"
           maxlength="20"
           @blur="applyNewType"
           @keyup.enter="applyNewType"
@@ -110,7 +110,7 @@ const isValid = computed(() => {
          Object.keys(errors.value).length === 0
 })
 
-// 获取已存在的标记类型（去重并排序）
+// 获取已存在的标签类型（去重并排序）
 const existingTypes = computed(() => {
   if (!props.existingTypes || !Array.isArray(props.existingTypes)) {
     return []
@@ -120,11 +120,11 @@ const existingTypes = computed(() => {
     .sort()
 })
 
-// 获取所有可用的标记选项（包括当前表单中的新标记）
+// 获取所有可用的标签选项（包括当前表单中的新标签）
 const allAvailableTypes = computed(() => {
   const types = [...existingTypes.value]
   
-  // 如果当前选中的标记不在已有列表中，且不是 'new'，则添加到选项中
+  // 如果当前选中的标签不在已有列表中，且不是 'new'，则添加到选项中
   if (form.value.card_type && 
       form.value.card_type !== 'new' && 
       !types.includes(form.value.card_type)) {
@@ -151,7 +151,7 @@ watch(() => props.modelValue, (newValue) => {
   }
 }, { deep: true })
 
-// 监听标记选择变化，重置新标记输入
+// 监听标签选择变化，重置新标签输入
 watch(() => form.value.card_type, (selectedType) => {
   if (selectedType !== 'new') {
     newType.value = ''
@@ -163,16 +163,16 @@ function validateField(field) {
   switch (field) {
     case 'content':
       if (!form.value.content.trim()) {
-        errors.value.content = '题目内容不能为空'
+        errors.value.content = '卡片内容不能为空'
       } else {
         delete errors.value.content
       }
       break
     case 'card_type':
       if (!form.value.card_type) {
-        errors.value.card_type = '请选择题目标记'
+        errors.value.card_type = '请选择卡片标签'
       } else if (form.value.card_type === 'new') {
-        errors.value.card_type = '请输入新的标记名称'
+        errors.value.card_type = '请输入新的标签名称'
       } else {
         delete errors.value.card_type
       }
@@ -192,7 +192,7 @@ function handleSubmit() {
   }
 }
 
-// 处理新增标记
+// 处理新增标签
 function applyNewType() {
   if (newType.value.trim()) {
     const trimmedType = newType.value.trim()
@@ -200,7 +200,7 @@ function applyNewType() {
     // 检查是否已存在
     const exists = allAvailableTypes.value.includes(trimmedType)
     if (exists) {
-      alert('该标记已存在，请选择已有标记或使用其他名称')
+      alert('该标签已存在，请选择已有标签或使用其他名称')
       return
     }
     

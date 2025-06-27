@@ -12,14 +12,10 @@
 // API 基础配置
 let API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 if (!API_BASE_URL) {
-  if (import.meta.env.DEV) {
-    // 开发环境，使用Vite代理
-    API_BASE_URL = '/api'
-  } else {
-    // 生产环境，自动适配当前域名+8000端口
-    const { protocol, hostname } = window.location
-    API_BASE_URL = `${protocol}//${hostname}:8000`
-  }
+  const { protocol, hostname } = window.location
+  API_BASE_URL = import.meta.env.DEV
+    ? `${protocol}//${hostname}:8000`
+    : `${protocol}//${hostname}:8000`
 }
 
 // 获取存储的token
@@ -39,6 +35,7 @@ function clearAuthToken() {
 
 // 基础 API 请求函数
 async function apiRequest(endpoint, options = {}) {
+  // endpoint 需以 /api/ 开头
   const url = `${API_BASE_URL}${endpoint}`
   const token = getAuthToken()
   

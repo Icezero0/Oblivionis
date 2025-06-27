@@ -1,12 +1,12 @@
-<!-- 题目管理页面 -->
+<!-- 卡片管理页面 -->
 <template>
   <div class="question-management">
     <div class="container">
       <div class="page-header">
-        <h1>📚 题目管理</h1>
+        <h1>📚 卡片管理</h1>
         <div class="header-actions">
           <button class="btn btn-primary" @click="showAddModal = true">
-            ➕ 添加题目
+            ➕ 添加卡片
           </button>
           <button class="btn btn-secondary" @click="showBatchModal = true">
             📥 批量导入
@@ -14,7 +14,7 @@
         </div>
       </div>
 
-      <!-- 题目标记过滤 -->
+      <!-- 卡片标记过滤 -->
       <div class="filter-section">
         <div class="filter-tabs">
           <button 
@@ -29,23 +29,23 @@
         </div>
       </div>
 
-      <!-- 题目列表 -->
+      <!-- 卡片列表 -->
       <QuestionList
         :questions="filteredQuestions"
         :loading="loading"
         :type-filter="currentFilter"
-        :empty-title="currentFilter === 'all' ? '还没有题目' : `暂无${getFilterLabel(currentFilter)}题目`"
-        :empty-message="currentFilter === 'all' ? '创建第一道题目开始学习吧！' : `暂无${getFilterLabel(currentFilter)}，可以添加或查看其他标记`"
+        :empty-title="currentFilter === 'all' ? '还没有卡片' : `暂无${getFilterLabel(currentFilter)}卡片`"
+        :empty-message="currentFilter === 'all' ? '创建第一张卡片开始学习吧！' : `暂无${getFilterLabel(currentFilter)}，可以添加或查看其他标签`"
         @select-question="selectQuestion"
         @edit-question="editQuestion"
         @delete-question="deleteQuestion"
         @add-question="showAddModal = true"
       />
 
-      <!-- 添加/编辑题目模态框 -->
+      <!-- 添加/编辑卡片模态框 -->
       <div v-if="showAddModal || showEditModal" class="modal-overlay">
         <div class="modal" @click.stop>
-          <h2>{{ showEditModal ? '编辑题目' : '添加题目' }}</h2>
+          <h2>{{ showEditModal ? '编辑卡片' : '添加卡片' }}</h2>
           
           <QuestionForm
             v-model="questionForm"
@@ -118,7 +118,7 @@ const filterTabs = computed(() => {
     return [{ value: 'all', label: '全部' }]
   }
   
-  // 获取所有唯一的题目类型
+  // 获取所有唯一的卡片类型
   const uniqueTypes = [...new Set(cards.value.map(card => card.card_type))]
     .filter(type => type) // 过滤掉空值
     .sort() // 按字母顺序排序
@@ -136,7 +136,7 @@ const filterTabs = computed(() => {
   return tabs
 })
 
-// 获取已存在的题目标记类型
+// 获取已存在的卡片标记类型
 const existingCardTypes = computed(() => {
   if (!cards.value || !Array.isArray(cards.value)) {
     return []
@@ -158,7 +158,7 @@ watch(() => showAddModal.value, (newVal) => {
   }
 })
 
-// 监听题目类型变化，重置过滤器
+// 监听卡片类型变化，重置过滤器
 // 优化递归：只有当前过滤器失效且不是'all'时才赋值，避免死循环
 watch(() => filterTabs.value, (newTabs) => {
   if (currentFilter.value !== 'all') {
@@ -176,7 +176,7 @@ async function loadQuestions() {
     const data = await cardAPI.getCards()
     cardStore.setCards(data)
   } catch (err) {
-    console.error('加载题目失败:', err)
+    console.error('加载卡片失败:', err)
   } finally {
     cardStore.setLoading(false)
   }
@@ -200,9 +200,9 @@ async function deleteQuestion(questionId) {
   try {
     await cardAPI.deleteCard(questionId)
     cardStore.deleteCard(questionId)
-    console.log('题目删除成功')
+    console.log('卡片删除成功')
   } catch (err) {
-    console.error('删除题目失败:', err)
+    console.error('删除卡片失败:', err)
   }
 }
 
@@ -220,17 +220,17 @@ async function saveQuestion(formData) {
       // 编辑模式
       const updatedQuestion = await cardAPI.updateCard(selectedQuestion.value.id, questionData)
       cardStore.updateCard(updatedQuestion)
-      console.log('题目更新成功')
+      console.log('卡片更新成功')
     } else {
       // 添加模式
       const newQuestion = await cardAPI.createCard(questionData)
       cardStore.addCard(newQuestion)
-      console.log('题目添加成功')
+      console.log('卡片添加成功')
     }
     
     closeModals()
   } catch (err) {
-    console.error('保存题目失败:', err)
+    console.error('保存卡片失败:', err)
   } finally {
     saving.value = false
   }
@@ -251,7 +251,7 @@ async function importBatchQuestions(questions) {
       cardStore.addCard(question)
     })
     
-    console.log(`成功导入 ${result.length} 道题目`)
+    console.log(`成功导入 ${result.length} 张卡片`)
     closeModals()
   } catch (err) {
     console.error('批量导入失败:', err)

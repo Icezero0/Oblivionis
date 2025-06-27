@@ -40,9 +40,9 @@
         </div>
       </div>
 
-      <!-- 卡片类型分布 -->
+      <!-- 卡片标签分布 -->
       <div class="card-type-distribution card">
-        <h3>📦 卡片类型分布</h3>
+        <h3>📦 卡片标签分布</h3>
         <div v-if="Object.keys(overview.cards_by_type || {}).length === 0" class="empty-state">暂无数据</div>
         <div v-else class="type-list">
           <div v-for="(count, type) in overview.cards_by_type" :key="type" class="type-item">
@@ -126,12 +126,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { statsAPI } from '@/services/api'
+import { useUserStore } from '@/stores'
 
 const overview = ref({})
 const progress = ref({})
 const session = ref({})
 const cardStats = ref({})
 const recommendations = ref([])
+const userStore = useUserStore()
 
 onMounted(() => {
   loadStatistics()
@@ -139,18 +141,20 @@ onMounted(() => {
 
 async function loadStatistics() {
   try {
+    const userId = userStore.currentUser?.id
+    if (!userId) throw new Error('未获取到用户ID，请先登录')
     const [overviewData, progressData, sessionData, cardStatsData, recData] = await Promise.all([
-      statsAPI.getUserOverview(1),
-      statsAPI.getLearningProgress(1).catch(e => {
+      statsAPI.getUserOverview(userId),
+      statsAPI.getLearningProgress(userId).catch(e => {
         if (e.message && e.message.includes('400')) {
           // 400错误时输出详细信息
           console.log('学习进度API 400错误:', e);
         }
         throw e;
       }),
-      statsAPI.getSessionAnalytics(1),
-      statsAPI.getCardStatistics(1),
-      statsAPI.getRecommendations(1)
+      statsAPI.getSessionAnalytics(userId),
+      statsAPI.getCardStatistics(userId),
+      statsAPI.getRecommendations(userId)
     ])
     overview.value = overviewData || {}
     progress.value = progressData || {}

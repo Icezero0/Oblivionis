@@ -49,12 +49,14 @@
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { drawAPI, statsAPI, settingsAPI } from '@/services/api'
+import { useUserStore } from '@/stores'
 import PracticeSettings from '@/components/PracticeSettings.vue'
 import PracticeCard from '@/components/PracticeCard.vue'
 import PracticeResults from '@/components/PracticeResults.vue'
 
 // 路由
 const router = useRouter()
+const userStore = useUserStore()
 
 // 练习阶段控制
 const currentStage = ref('setup') // setup, practicing, results, loading
@@ -113,7 +115,8 @@ async function startPractice() {
   await saveDrawSettings()
   try {
     // 调用抽题接口 - 传递userId参数
-    const userId = 1 // 实际应该从用户状态获取
+    const userId = userStore.currentUser?.id // 实际从用户状态获取
+    if (!userId) throw new Error('未获取到用户ID，请先登录')
     const response = await drawAPI.drawCards(userId, {
       type_counts: practiceSettings.value.items.reduce((acc, item) => {
         if (item.tag && item.quantity > 0) {
@@ -267,7 +270,8 @@ function viewStats() {
 
 // 保存抽卡设置到后端（可选，建议在设置变更或开始练习时调用）
 async function saveDrawSettings() {
-  const userId = 1; // 实际应从用户状态获取
+  const userId = userStore.currentUser?.id // 实际应从用户状态获取
+  if (!userId) return
   const type_counts = practiceSettings.value.items.reduce((acc, item) => {
     if (item.tag && item.quantity > 0) acc[item.tag] = item.quantity;
     return acc;

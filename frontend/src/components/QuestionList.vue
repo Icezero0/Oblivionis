@@ -1,4 +1,4 @@
-<!-- 题目列表组件 -->
+<!-- 卡片列表组件 -->
 <template>
   <div class="question-list">
     <!-- 加载状态 -->
@@ -13,15 +13,15 @@
       <h3>{{ emptyTitle }}</h3>
       <p>{{ emptyMessage }}</p>
       <button v-if="showAddButton" class="btn btn-primary" @click="$emit('add-question')">
-        ➕ 添加第一道题目
+        ➕ 添加第一张卡片
       </button>
     </div>
     
-    <!-- 题目网格 -->
+    <!-- 卡片网格 -->
     <div v-else class="questions-grid">
       <div class="grid-header" v-if="showStats">
         <div class="stats-info">
-          <span>共 {{ questions.length }} 道题目</span>
+          <span>共 {{ questions.length }} 张卡片</span>
           <span v-if="typeFilter !== 'all'">筛选结果</span>
         </div>
         <div class="view-options">
@@ -78,11 +78,11 @@ const props = defineProps({
   },
   emptyTitle: {
     type: String,
-    default: '暂无题目'
+    default: '暂无卡片'
   },
   emptyMessage: {
     type: String,
-    default: '还没有题目，创建第一道题目开始学习吧！'
+    default: '还没有卡片，创建第一张卡片开始学习吧！'
   },
   showAddButton: {
     type: Boolean,

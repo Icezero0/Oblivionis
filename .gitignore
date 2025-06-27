@@ -17,8 +17,6 @@ coverage
 /cypress/videos/
 /cypress/screenshots/
 
-data/
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -30,3 +28,18 @@ data/
 *.sw?
 
 *.tsbuildinfo
+
+# Virtual environments
+venv/
+
+# Database
+.db
+
+# VS Code
+.vscode/
+
+# Git
+# .gitignore
+.git
+
+data/
