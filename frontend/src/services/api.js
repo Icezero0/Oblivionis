@@ -145,7 +145,7 @@ export const cardAPI = {
   getCard: (cardId) => apiRequest(`/api/cards/${cardId}`),
   
   // 创建卡片 - POST /api/cards
-  createCard: (cardData) => apiRequest(`/api/cards`, {
+  createCard: (cardData) => apiRequest(`/api/cards/`, {
     method: 'POST',
     body: JSON.stringify({
       content: cardData.content,
