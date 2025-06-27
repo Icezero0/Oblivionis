@@ -2,9 +2,9 @@
 <template>
   <div class="batch-import">
     <div class="import-header">
-      <h3>批量导入题目</h3>
+      <h3>批量导入卡片</h3>
       <p class="import-description">
-        快速导入多道题目，支持批量创建不同类型的题目
+        快速导入多张卡片，支持批量创建不同标签的卡片
       </p>
     </div>
 
@@ -12,31 +12,31 @@
       <!-- 格式说明 -->
       <div class="format-section">
         <h4>📋 导入格式说明</h4>
-        <p class="format-hint">请按以下格式输入题目，每行一道题目：</p>
+        <p class="format-hint">请按以下格式输入卡片，每行代表一张卡片：</p>
         <div class="format-example">
           <div class="example-item">
-            <code>标记|题目内容|备注(可选)</code>
+            <code>标签|卡片内容|备注(可选)</code>
             <span class="example-desc">基本格式</span>
           </div>
           <div class="example-item">
             <code>名词解释|这是一道名词解释题|</code>
-            <span class="example-desc">示例：自定义标记</span>
+            <span class="example-desc">示例：自定义标签</span>
           </div>
         </div>
         <div class="format-tips">
           <p>💡 <strong>说明：</strong></p>
           <ul>
-            <li>题目标记可以是任意字符（如：名词解释、简答题、选择题等）</li>
-            <li>题目内容为必填项</li>
+            <li>卡片标签可以是任意字符（如：名词解释、简答题、选择题等）</li>
+            <li>卡片内容为必填项</li>
             <li>备注为可选项，可以留空</li>
-            <li>每行代表一道题目</li>
+            <li>每行代表一张卡片</li>
           </ul>
         </div>
       </div>
 
       <!-- 输入区域 -->
       <div class="input-section">
-        <label for="batch-content">题目内容</label>
+        <label for="batch-content">卡片内容</label>
         <textarea 
           id="batch-content"
           v-model="content" 
@@ -46,7 +46,7 @@
         ></textarea>
         <div class="input-stats">
           <span>行数: {{ lineCount }}</span>
-          <span>有效题目: {{ validQuestions.length }}</span>
+          <span>有效卡片: {{ validQuestions.length }}</span>
           <span v-if="errors.length > 0" class="error-count">错误: {{ errors.length }}</span>
         </div>
       </div>
@@ -65,7 +65,7 @@
 
       <!-- 预览区域 -->
       <div v-if="validQuestions.length > 0" class="preview-section">
-        <h4>👀 导入预览 ({{ validQuestions.length }} 道题目)</h4>
+        <h4> 导入预览 ({{ validQuestions.length }} 张卡片)</h4>
         <div class="preview-list">
           <div v-for="(question, index) in validQuestions" :key="index" class="preview-item">
             <span class="preview-type" :class="`type-${question.card_type}`">
@@ -90,7 +90,7 @@
         @click="handleImport"
         :disabled="validQuestions.length === 0 || loading"
       >
-        {{ loading ? '导入中...' : `导入 ${validQuestions.length} 道题目` }}
+        {{ loading ? '导入中...' : `导入 ${validQuestions.length} 张卡片` }}
       </button>
     </div>
   </div>
@@ -135,8 +135,8 @@ const validQuestions = computed(() => {
         notes: parts[2] ? parts[2].trim() : ''
       }
       
-      // 验证题目类型和内容
-      if (['M', 'N'].includes(question.card_type) && question.content) {
+      // 验证卡片标签和内容
+      if (question.card_type && question.content) {
         questions.push(question)
       }
     }
@@ -163,7 +163,7 @@ function validateContent() {
     if (parts.length < 2) {
       errors.value.push({
         line: lineNumber,
-        message: '格式错误，至少需要题目类型和内容，用 | 分隔',
+        message: '格式错误，至少需要卡片标签和内容，用 | 分隔',
         content: line
       })
       continue
@@ -172,10 +172,11 @@ function validateContent() {
     const cardType = parts[0].trim()
     const questionContent = parts[1].trim()
     
-    if (!['M', 'N'].includes(cardType)) {
+    // 移除标签类型限制，允许任意非空标签
+    if (!cardType) {
       errors.value.push({
         line: lineNumber,
-        message: '题目类型错误，只支持 M (名词解释) 或 N (简答题)',
+        message: '卡片标签不能为空',
         content: line
       })
       continue
@@ -184,16 +185,16 @@ function validateContent() {
     if (!questionContent) {
       errors.value.push({
         line: lineNumber,
-        message: '题目内容不能为空',
+        message: '卡片内容不能为空',
         content: line
       })
       continue
     }
     
-    if (questionContent.length < 3) {
+    if (questionContent.length < 1) {
       errors.value.push({
         line: lineNumber,
-        message: '题目内容太短，至少需要3个字符',
+        message: '卡片内容太短，至少需要1个字符',
         content: line
       })
     }
@@ -201,11 +202,8 @@ function validateContent() {
 }
 
 function getCardTypeLabel(type) {
-  const types = {
-    'M': 'M题(名词解释)',
-    'N': 'N题(简答题)'
-  }
-  return types[type] || type
+  // 允许自定义标签，直接返回标签内容
+  return type
 }
 
 function handleImport() {

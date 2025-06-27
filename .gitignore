@@ -29,9 +29,6 @@ coverage
 
 *.tsbuildinfo
 
-# Virtual environments
-venv/
-
 # Database
 .db
 

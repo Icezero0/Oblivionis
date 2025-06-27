@@ -11,7 +11,7 @@
           <h3>卡片管理</h3>
           <p>添加、编辑和管理你的学习卡片</p>
           <div class="card-stats">
-            <span>{{ questionStats.total || 0 }} 道卡片</span>
+            <span>{{ questionStats.total || 0 }} 张卡片</span>
           </div>
         </router-link>
         
